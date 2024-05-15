@@ -18,7 +18,7 @@ In order to run the experiment, you need to prepare an OBD-II cable that support
 
 Here is a sample file of raw data obtained from the ECU to help better understand the format of the data read from the ECU: 
 
-*rawdata_From_OBD_ECU.csv*
+[rawdata_From_OBD_ECU.csv](https://github.com/ZikunWang-Ricardo/Vehicle_Experiment_Guideline/blob/cf13c19d0bcc320fc3675222b8df5325b7317f8c/Example%20Data/rawdata_From_OBD_ECU.csv)
 
 ### CAN Data Collection
 
