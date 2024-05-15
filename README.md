@@ -2,7 +2,7 @@
 
 This project describes the detailed workflow for vehicle data collection that I followed during my graduation thesis. The data collection process was conducted in a laboratory setting and aimed to gather vehicle performance and behavior data under various conditions. This project was a collaborative effort between [VTI](https://www.vti.se/) and the  [Chalmers REVERE Lab](https://www.chalmers.se/en/infrastructure/revere/). This guideline is also a part of our Master Thesis.
 
-In this thesis project, I would like to give special thanks to Daniel for his great support of the experiment. He not only provided invaluable expertise and technical guidance, but also gave selfless help and encouragement at all stages of the experiments. Thanks to his support and participation, these ideas could be successfully transformed from conception to practice, and Daniel's contribution not only enhanced the quality of the experiments, but also laid a solid foundation for the successful completion of the project. I am deeply fortunate to have had his support and guidance in this project.
+In this thesis project, I would like to give special thanks to Daniel Poveda Pi from Chalmers REEVERE Lab for his great support of the experiment. He not only provided invaluable expertise and technical guidance, but also gave selfless help and encouragement at all stages of the experiments. Thanks to his support and participation, these ideas could be successfully transformed from conception to practice, and Daniel's contribution not only enhanced the quality of the experiments, but also laid a solid foundation for the successful completion of the project. I am deeply fortunate to have had his support and guidance in this project.
 
 ## Data Collection From OBD-II
 
