@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic GPS and Acceleration Data Visualization with Leaflet and Plotly</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        #map, #accelPlot {
+            width: 600px;
+            height: 400px;
+        }
+        #control {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+<div id="accelPlot"></div>
+<div id="control">
+    <button id="toggle">Pause</button>
+    <input type="range" id="timeSlider" min="0" max="100" value="0" style="width: 300px;">
+    <span id="currentTime"></span>
+</div>
+
+<script>
+    // Initialize the map on the "map" div
+    var map = L.map('map').setView([59.3293, 18.0686], 8); // Example: Stockholm
+
+    // Add a tile layer to add to our map
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Optionally, use a satellite layer from a different provider
+    L.tileLayer('https://{s}.sat.earthdata.nasa.gov/wmts-webmerc/wmts.cgi?SERVICE=WMTS&request=GetTile&version=1.0.0&LAYER=VIIRS_SNPP_CorrectedReflectance_TrueColor&tilematrixset=GoogleMapsCompatible_Level9&TileMatrix={z}&TileCol={x}&TileRow={y}&format=image%2Fjpeg', {
+        attribution: 'Imagery provided by services from NASA\'s Global Imagery Browse Services (GIBS), part of NASA\'s Earth Observing System Data and Information System (EOSDIS)'
+    }).addTo(map);
+
+    fetch('data.json')
+    .then(response => response.json())
+    .then(data => {
+        let paused = false;
+        const lat = data.map(item => item.lat);
+        const lon = data.map(item => item.lon);
+        const t_tot = data.map(item => item.t_tot);
+        const a_x = data.map(item => item.a_x_interp);
+        const a_y = data.map(item => item.a_y_interp);
+        const a_z = data.map(item => item.a_z_interp);
+
+        var marker = L.marker([lat[0], lon[0]]).addTo(map);
+
+        // Initialize acceleration plot
+        Plotly.newPlot('accelPlot', [{
+            x: t_tot,
+            y: a_x,
+            mode: 'lines',
+            name: 'Ax'
+        }, {
+            x: t_tot,
+            y: a_y,
+            mode: 'lines',
+            name: 'Ay'
+        }, {
+            x: t_tot,
+            y: a_z,
+            mode: 'lines',
+            name: 'Az'
+        }], {
+            title: 'Acceleration Data',
+            xaxis: {title: 'Time (s)'},
+            yaxis: {title: 'Acceleration (m/s^2)'}
+        });
+
+        function updateMap(index) {
+            marker.setLatLng([lat[index], lon[index]]);
+            map.panTo([lat[index], lon[index]]);
+        }
+
+        function updateAccelPlot(index) {
+            Plotly.react('accelPlot', [{
+                x: t_tot.slice(0, index + 1),
+                y: a_x.slice(0, index + 1),
+                mode: 'lines',
+                name: 'Ax'
+            }, {
+                x: t_tot.slice(0, index + 1),
+                y: a_y.slice(0, index + 1),
+                mode: 'lines',
+                name: 'Ay'
+            }, {
+                x: t_tot.slice(0, index + 1),
+                y: a_z.slice(0, index + 1),
+                mode: 'lines',
+                name: 'Az'
+            }], {
+                title: 'Acceleration Data',
+                xaxis: {title: 'Time (s)'},
+                yaxis: {title: 'Acceleration (m/s^2)'}
+            });
+        }
+
+        document.getElementById('toggle').addEventListener('click', function() {
+            paused = !paused;
+            this.textContent = paused ? 'Resume' : 'Pause';
+        });
+
+        document.getElementById('timeSlider').max = t_tot.length - 1;
+        document.getElementById('timeSlider').addEventListener('input', function() {
+            let index = parseInt(this.value);
+            updateMap(index);
+            updateAccelPlot(index);
+            paused = true;
+            document.getElementById('toggle').textContent = 'Resume';
+        });
+
+        let index = 0;
+        function autoUpdate() {
+            if (!paused && index < t_tot.length) {
+                updateMap(index);
+                updateAccelPlot(index);
+                index++;
+            }
+        }
+        setInterval(autoUpdate, 100);
+    });
+</script>
+
+</body>
+</html>
